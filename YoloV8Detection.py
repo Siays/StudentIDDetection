@@ -10,7 +10,7 @@ pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tessera
 
 # use the pre-trained dataset to track person
 # model = YOLO('yolov8n.pt')
-model = YOLO(r'C:\Users\syshe\AI\assignment\runs\detect\card_test20\weights\best.pt')
+model = YOLO(r'C:\Users\syshe\AI\assignment\StudentIDDetection\card_test20\weights\best.pt')
 
 # 11st training: epochs = 60
 # 12nd training epochs = 100
@@ -101,7 +101,7 @@ def yoloV8_dectect(ocr_display):
 # test_string = "SIA YEONG SHENG == 23WMR09471 -----=ad EXPIRY DATE: 31-08-2025 200010123"
 
 def check_id(string):
-    student_id_reg = r'\d{2}[A-Z]{3}\d{5}'
+    student_id_reg = r'\d{2}[A-Z]{3}(?:\d|O){5}' # digit | o in uppercase , accept o in between the digits
     match = re.search(student_id_reg, string)
 
     if match:
@@ -135,4 +135,4 @@ def check_exp_date(string):
     return False
 
 
-# yoloV8_dectect()
+
