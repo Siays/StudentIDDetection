@@ -14,7 +14,7 @@ def detectronDetect(ocr_display):
     # Load config from a config file
     cfg = get_cfg()
     cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml"))
-    cfg.MODEL.WEIGHTS = './detectronOutput/colab_896v2.pth'
+    cfg.MODEL.WEIGHTS = './detectronOutput/colab_896v2.1.pth'
     cfg.MODEL.DEVICE = 'cpu'
     cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 128  # faster, and good enough for this toy dataset (default: 512)
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = 6  # (see https://detectron2.readthedocs.io/tutorials/datasets.html#update-the-config-for-new-datasets)
