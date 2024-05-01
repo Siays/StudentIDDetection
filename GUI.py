@@ -32,9 +32,11 @@ def start_model(model_runner):
         model_runner.ocr_display.set("")  # Clear OCR display when starting a model
         model_runner.thread = threading.Thread(target=model_runner.run_model)
         model_runner.thread.start()
+        disable_buttons(exclude_button=model_buttons[model_runners.index(model_runner)])
 
 def stop_model(model_runner):
     model_runner.stop_model()
+    enable_buttons()
 
 def disable_buttons(exclude_button):
     for button in model_buttons:
