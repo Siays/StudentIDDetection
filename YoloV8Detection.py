@@ -101,7 +101,7 @@ def yoloV8_dectect(ocr_display):
 # test_string = "SIA YEONG SHENG == 23WMR09471 -----=ad EXPIRY DATE: 31-08-2025 200010123"
 
 def check_id(string):
-    student_id_reg = r'\d{2}[A-Z]{3}(?:\d|O){5}' # digit | o in uppercase , accept o in between the digits
+    student_id_reg = r'(?:\d|O){2}[A-Z]{3}(?:\d|O){5}' # digit | o in uppercase , accept o in between the digits
     match = re.search(student_id_reg, string)
 
     if match:
