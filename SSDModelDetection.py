@@ -47,7 +47,7 @@ class VideoStream:
 
     def __init__(self, resolution=(640, 480), framerate=30):
         # Initialize the PiCamera and the camera image stream
-        self.stream = cv2.VideoCapture(2)
+        self.stream = cv2.VideoCapture(1)
         ret = self.stream.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
         ret = self.stream.set(3, resolution[0])
         ret = self.stream.set(4, resolution[1])
@@ -108,7 +108,7 @@ def ssdModel_detect(ocr_display):
     GRAPH_NAME = 'detect.tflite'
     LABELMAP_NAME = 'labelmap.txt'
     min_conf_threshold = 0.8
-    resW, resH = 1024, 768
+    resW, resH = 1280, 720
     imW, imH = int(resW), int(resH)
     # use_TPU = args.edgetpu
 
@@ -212,15 +212,15 @@ def ssdModel_detect(ocr_display):
             if ((scores[i] > min_conf_threshold) and (scores[i] <= 1.0)):
                 # Get bounding box coordinates and draw box
                 # Interpreter can return coordinates that are outside of image dimensions, need to force them to be within image using max() and min()
-                # ymin = int(max(1, (boxes[i][0] * imH)))
-                # xmin = int(max(1, (boxes[i][1] * imW)))
-                # ymax = int(min(imH, (boxes[i][2] * imH)))
-                # xmax = int(min(imW, (boxes[i][3] * imW)))
+                ymin = int(max(1, (boxes[i][0] * imH)))
+                xmin = int(max(1, (boxes[i][1] * imW)))
+                ymax = int(min(imH, (boxes[i][2] * imH)))
+                xmax = int(min(imW, (boxes[i][3] * imW)))
 
-                xmin = int(max(1, (boxes[i][1] * imW) / original_width * original_width))
-                ymin = int(max(1, (boxes[i][0] * imH) / original_height * original_height))
-                xmax = int(min(imW, (boxes[i][3] * imW) / original_width * original_width))
-                ymax = int(min(imH, (boxes[i][2] * imH) / original_height * original_height))
+                # xmin = int(max(1, (boxes[i][1] * imW) / original_width * original_width))
+                # ymin = int(max(1, (boxes[i][0] * imH) / original_height * original_height))
+                # xmax = int(min(imW, (boxes[i][3] * imW) / original_width * original_width))
+                # ymax = int(min(imH, (boxes[i][2] * imH) / original_height * original_height))
 
                 cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), (10, 255, 0), 2)
 
