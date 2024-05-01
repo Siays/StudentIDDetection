@@ -1,5 +1,7 @@
 import tkinter as tk
 import threading
+
+import DetectronPredict
 import YoloV8Detection  # Import the YoloV8Detection module
 
 class ModelRunner:
@@ -16,8 +18,8 @@ class ModelRunner:
             if self.model_name == "Yolo v8":
                 YoloV8Detection.yoloV8_dectect(self.ocr_display)
 
-            elif self.model_name == "Model 2":
-                pass
+            elif self.model_name == "Detectron2":
+                DetectronPredict.detectronDetect(self.ocr_display)
             elif self.model_name == "Model 3":
                 pass
 
@@ -72,7 +74,7 @@ ocr_label.pack()
 # Create model runners
 model_runners = [
     ModelRunner("Yolo v8", ocr_display),
-    ModelRunner("Model 2", ocr_display),
+    ModelRunner("Detectron2", ocr_display),
     ModelRunner("Model 3", ocr_display)
 ]
 

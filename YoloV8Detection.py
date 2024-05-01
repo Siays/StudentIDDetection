@@ -3,6 +3,7 @@ from ultralytics import YOLO
 import cv2
 import pytesseract
 import time
+import validateID as et
 import re
 from datetime import datetime
 
@@ -10,8 +11,8 @@ pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tessera
 
 # use the pre-trained dataset to track person
 # model = YOLO('yolov8n.pt')
-model = YOLO(r'C:\Users\syshe\AI\assignment\StudentIDDetection\card_test20\weights\best.pt')
-
+# model = YOLO(r'C:\Users\syshe\AI\assignment\StudentIDDetection\card_test20\weights\best.pt')
+model = YOLO(r'.\card_test20\weights\best.pt')
 # 11st training: epochs = 60
 # 12nd training epochs = 100
 # 13rd & 18th & 19th training epochs = 70, using back the test11 best.pt
@@ -54,7 +55,7 @@ def yoloV8_dectect(ocr_display):
                 #covnert roi to grayscale making teserract work btr
                 gray_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
                 text = pytesseract.image_to_string(gray_roi)
-                if check_id(text) and check_exp_date(text):
+                if et.check_id(text) and et.check_exp_date(text):
                     winsound.Beep(1000, 200)
                 ocr_display.set(text)
 
@@ -100,39 +101,6 @@ def yoloV8_dectect(ocr_display):
     #     result.show()  # display to screen
 # test_string = "SIA YEONG SHENG == 23WMR09471 -----=ad EXPIRY DATE: 31-08-2025 200010123"
 
-def check_id(string):
-    student_id_reg = r'(?:\d|O){2}[A-Z]{3}(?:\d|O){5}' # digit | o in uppercase , accept o in between the digits
-    match = re.search(student_id_reg, string)
-
-    if match:
-        print("matched")
-        return True
-
-    return False
-
-
-def check_exp_date(string):
-    exp_date_reg = r'\b(?:0[1-9]|[12][0-9]|3[01])-(?:0[1-9]|1[0-2])-(?:20)\d{2}\b'  # Pattern to match expiry date format
-    # match = re.search(exp_date_reg, string)
-    expiry_match = re.search(exp_date_reg, string)
-
-    # Check if expiry date is found
-    if expiry_match:
-        # Extract the expiry date
-        expiry_date_str = expiry_match.group()
-
-        # Convert expiry date string to datetime object
-        expiry_date = datetime.strptime(expiry_date_str, "%d-%m-%Y")
-
-        # Get current date
-        current_date = datetime.now()
-
-        # Compare expiry date with current date
-        if expiry_date > current_date:
-            print("Not expired.")
-            return True
-
-    return False
 
 
 
