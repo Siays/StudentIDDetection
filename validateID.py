@@ -14,16 +14,21 @@ def check_id(string):
 
 def check_exp_date(string):
     exp_date_reg = r'\b(?:0[1-9]|[12][0-9]|3[01])-(?:0[1-9]|1[0-2])-(?:20)\d{2}\b'  # Pattern to match expiry date format
-    # match = re.search(exp_date_reg, string)
-    expiry_match = re.search(exp_date_reg, string)
 
-    # Check if expiry date is found
-    if expiry_match:
+    # Check if the input string matches the pattern
+    match = re.search(exp_date_reg, string, flags=re.IGNORECASE)
+    if match:
         # Extract the expiry date
-        expiry_date_str = expiry_match.group()
+        expiry_date_str = match.group()
+
+        print(expiry_date_str)
 
         # Convert expiry date string to datetime object
-        expiry_date = datetime.strptime(expiry_date_str, "%d-%m-%Y")
+        try:
+            expiry_date = datetime.strptime(expiry_date_str, "%d-%m-%Y")
+        except ValueError:
+            print("Invalid expiry date format")
+            return False
 
         # Get current date
         current_date = datetime.now()
