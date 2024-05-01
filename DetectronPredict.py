@@ -30,7 +30,7 @@ def detectronDetect(ocr_display):
             break
 
         # Resize the frame
-        frame = cv2.resize(frame, (500, 500), interpolation=cv2.INTER_LINEAR)
+        frame = cv2.resize(frame, (700,700), interpolation=cv2.INTER_LINEAR)
 
         # Perform prediction
         outputs = predictor(frame)
@@ -60,8 +60,8 @@ def detectronDetect(ocr_display):
                     winsound.Beep(1000, 200)
                 ocr_display.set(text)
                 # cv2.putText(frame, text, (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-
-        cv2.imshow('image', frame)
+                cv2.putText(frame, f'{score * 100:.2f}%', (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        cv2.imshow('Phone Camera', frame)
 
         # Exit on key press
         if cv2.waitKey(1) & 0xFF == ord('q'):
