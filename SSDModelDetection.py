@@ -25,7 +25,6 @@
 
 # Import packages
 import os
-import argparse
 import cv2
 import numpy as np
 import time
@@ -35,10 +34,11 @@ import importlib.util
 import pytesseract
 import winsound
 
-import validateID as et
+import validateID
 
 # set the path for tesseract
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+
 
 # Define VideoStream class to handle streaming of video from webcam in separate processing thread
 # Source - Adrian Rosebrock, PyImageSearch: https://www.pyimagesearch.com/2015/12/28/increasing-raspberry-pi-fps-with-python-and-opencv/
@@ -102,14 +102,14 @@ class VideoStream:
 
 # args = parser.parse_args()
 
-def ssdModel_detect(ocr_display):
+def ssd_model_detect(ocr_display, validated_display):
     # set model directory name
-    MODEL_NAME = "SSDModel"
-    GRAPH_NAME = 'detect.tflite'
-    LABELMAP_NAME = 'labelmap.txt'
+    model_name = "SSDModel"
+    graph_name = 'detect.tflite'
+    labelmap_name = 'labelmap.txt'
     min_conf_threshold = 0.8
-    resW, resH = 640, 480
-    imW, imH = int(resW), int(resH)
+    res_w, res_h = 640, 480
+    im_w, im_h = int(res_w), int(res_h)
     # use_TPU = args.edgetpu
 
     # Import TensorFlow libraries
@@ -122,16 +122,16 @@ def ssdModel_detect(ocr_display):
         from tensorflow.lite.python.interpreter import Interpreter
 
     # Get path to current working directory
-    CWD_PATH = os.getcwd()
+    cwd_path = os.getcwd()
 
     # Path to .tflite file, which contains the model that is used for object detection
-    PATH_TO_CKPT = os.path.join(CWD_PATH, MODEL_NAME, GRAPH_NAME)
+    path_to_ckpt = os.path.join(cwd_path, model_name, graph_name)
 
     # Path to label map file
-    PATH_TO_LABELS = os.path.join(CWD_PATH, MODEL_NAME, LABELMAP_NAME)
+    path_to_labels = os.path.join(cwd_path, model_name, labelmap_name)
 
     # Load the label map
-    with open(PATH_TO_LABELS, 'r') as f:
+    with open(path_to_labels, 'r') as f:
         labels = [line.strip() for line in f.readlines()]
 
     # Have to do a weird fix for label map if using the COCO "starter model" from
@@ -141,7 +141,7 @@ def ssdModel_detect(ocr_display):
         del (labels[0])
 
     # Load the Tensorflow Lite model.
-    interpreter = Interpreter(model_path=PATH_TO_CKPT)
+    interpreter = Interpreter(model_path=path_to_ckpt)
 
     interpreter.allocate_tensors()
 
@@ -160,7 +160,7 @@ def ssdModel_detect(ocr_display):
     # because outputs are ordered differently for TF2 and TF1 models
     outname = output_details[0]['name']
 
-    if ('StatefulPartitionedCall' in outname):  # This is a TF2 model
+    if 'StatefulPartitionedCall' in outname:  # This is a TF2 model
         boxes_idx, classes_idx, scores_idx = 1, 3, 0
     else:  # This is a TF1 model
         boxes_idx, classes_idx, scores_idx = 0, 1, 2
@@ -170,7 +170,7 @@ def ssdModel_detect(ocr_display):
     freq = cv2.getTickFrequency()
 
     # Initialize video stream
-    videostream = VideoStream(resolution=(imW, imH), framerate=30).start()
+    videostream = VideoStream(resolution=(im_w, im_h), framerate=30).start()
     time.sleep(1)
 
     # for frame1 in camera.capture_continuous(rawCapture, format="bgr",use_video_port=True):
@@ -212,23 +212,23 @@ def ssdModel_detect(ocr_display):
 
         # Loop over all detections and draw detection box if confidence is above minimum threshold
         for i in range(len(scores)):
-            if ((scores[i] > min_conf_threshold) and (scores[i] <= 1.0)):
-                # Get bounding box coordinates and draw box
-                # Interpreter can return coordinates that are outside of image dimensions, need to force them to be within image using max() and min()
-                ymin = int(max(1, (boxes[i][0] * imH)))
-                xmin = int(max(1, (boxes[i][1] * imW)))
-                ymax = int(min(imH, (boxes[i][2] * imH)))
-                xmax = int(min(imW, (boxes[i][3] * imW)))
+            if (scores[i] > min_conf_threshold) and (scores[i] <= 1.0):
+                # Get bounding box coordinates and draw box Interpreter can return coordinates that are outside of
+                # image dimensions, need to force them to be within image using max() and min()
+                ymin = int(max(1, (boxes[i][0] * im_h)))
+                xmin = int(max(1, (boxes[i][1] * im_w)))
+                ymax = int(min(im_h, (boxes[i][2] * im_h)))
+                xmax = int(min(im_w, (boxes[i][3] * im_w)))
 
                 cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), (10, 255, 0), 2)
 
                 # Draw label
                 object_name = labels[int(classes[i])]  # Look up object name from "labels" array using class index
                 label = '%s: %d%%' % (object_name, int(scores[i] * 100))  # Example: 'person: 72%'
-                labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.7, 2)  # Get font size
-                label_ymin = max(ymin, labelSize[1] + 10)  # Make sure not to draw label too close to top of window
-                cv2.rectangle(frame, (xmin, label_ymin - labelSize[1] - 10),
-                              (xmin + labelSize[0], label_ymin + baseLine - 10), (255, 255, 255),
+                label_size, base_line = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.7, 2)  # Get font size
+                label_ymin = max(ymin, label_size[1] + 10)  # Make sure not to draw label too close to top of window
+                cv2.rectangle(frame, (xmin, label_ymin - label_size[1] - 10),
+                              (xmin + label_size[0], label_ymin + base_line - 10), (255, 255, 255),
                               cv2.FILLED)  # Draw white box to put label text in
                 cv2.putText(frame, label, (xmin, label_ymin - 7), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0),
                             2)  # Draw label text
@@ -239,16 +239,15 @@ def ssdModel_detect(ocr_display):
                     # convert object_image to grayscale making tesseract work better
                     gray_object_image = cv2.cvtColor(object_image, cv2.COLOR_BGR2GRAY)
                     text = pytesseract.image_to_string(gray_object_image)
-                    if et.check_id(text) and et.check_exp_date(text):
+                    if validateID.check_id(text) and validateID.check_exp_date(text):
                         winsound.Beep(1000, 200)
                     ocr_display.set(text)
                 else:
                     print("No object detected in the frame")
 
-
-
         # Draw framerate in corner of frame
-        cv2.putText(frame, 'FPS: {0:.2f}'.format(frame_rate_calc), (30, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2,
+        cv2.putText(frame, 'FPS: {0:.2f}'.format(frame_rate_calc), (30, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0),
+                    2,
                     cv2.LINE_AA)
 
         # All the results have been drawn on the frame, so it's time to display it.

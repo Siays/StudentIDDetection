@@ -9,7 +9,8 @@ import winsound
 # set the path for tesseract
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
-def detectronDetect(ocr_display):
+
+def detectron_detect(ocr_display):
     # Load config from a config file
     cfg = get_cfg()
     cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml"))
@@ -29,7 +30,7 @@ def detectronDetect(ocr_display):
             break
 
         # Resize the frame
-        frame = cv2.resize(frame, (700,700), interpolation=cv2.INTER_LINEAR)
+        frame = cv2.resize(frame, (700, 700), interpolation=cv2.INTER_LINEAR)
 
         # Perform prediction
         outputs = predictor(frame)
@@ -69,6 +70,3 @@ def detectronDetect(ocr_display):
     # Release resources
     cap.release()
     cv2.destroyAllWindows()
-
-
-

@@ -8,9 +8,10 @@ import YoloV8Detection  # Import the YoloV8Detection module
 
 
 class ModelRunner:
-    def __init__(self, model_name, ocr_display):
+    def __init__(self, model_name, model_ocr_display, last_validated_display):
         self.model_name = model_name
-        self.ocr_display = ocr_display
+        self.model_ocr_display = model_ocr_display
+        self.last_validated_display = last_validated_display
         self.running = False
         self.thread = None
 
@@ -19,27 +20,28 @@ class ModelRunner:
         while self.running:
             # Start the appropriate model based on self.model_name
             if self.model_name == "Yolo v8":
-                YoloV8Detection.yoloV8_detect(self.ocr_display)
+                YoloV8Detection.yolo_v8_detect(self.model_ocr_display, self.last_validated_display)
             elif self.model_name == "Detectron 2":
-                DetectronPredict.detectronDetect(self.ocr_display)
+                DetectronPredict.detectron_detect(self.model_ocr_display, self.last_validated_display)
             elif self.model_name == "SSD MobileNet V2 FPNLite 320x320":
-                SSDModelDetection.ssdModel_detect(self.ocr_display)
+                SSDModelDetection.ssd_model_detect(self.model_ocr_display, self.last_validated_display)
             stop_model(self)
 
     def stop_model(self):
         self.running = False
 
 
-def start_model(model_runner):
-    if model_runner.thread is None or not model_runner.thread.is_alive():
-        model_runner.ocr_display.set("")  # Clear OCR display when starting a model
-        model_runner.thread = threading.Thread(target=model_runner.run_model)
-        model_runner.thread.start()
-        disable_buttons(exclude_button=model_buttons[model_runners.index(model_runner)])
+def start_model(model):
+    if model.thread is None or not model.thread.is_alive():
+        model.model_ocr_display.set("")  # Clear OCR display when starting a model
+        model.last_validated_display.set("") # Clear validated display when starting a model
+        model.thread = threading.Thread(target=model.run_model)
+        model.thread.start()
+        disable_buttons(exclude_button=model_buttons[model_runners.index(model)])
 
 
-def stop_model(model_runner):
-    model_runner.stop_model()
+def stop_model(model):
+    model.stop_model()
     enable_buttons()
 
 
@@ -54,16 +56,8 @@ def enable_buttons():
         button.config(state=tk.NORMAL)
 
 
-def key_pressed(event):
-    if event.char == "q":
-        enable_buttons()  # Enable model buttons when "q" is pressed
-        # Stop all models
-        for model_runner in model_runners:
-            stop_model(model_runner)
-
-
 root = tk.Tk()
-root.title("Model GUI")
+root.title("TARUMT Student ID detector")
 root.geometry("850x650")  # Set the default window size
 
 # Create a frame for the displaying the instructions
@@ -127,9 +121,9 @@ ocr_box.grid(row=1, column=1, padx=5, pady=5)  # Add some vertical and horizonta
 
 # Create model runners
 model_runners = [
-    ModelRunner("Yolo v8", ocr_display),
-    ModelRunner("Detectron 2", ocr_display),
-    ModelRunner("SSD MobileNet V2 FPNLite 320x320", ocr_display)
+    ModelRunner("Yolo v8", ocr_display, validated_display),
+    ModelRunner("Detectron 2", ocr_display, validated_display),
+    ModelRunner("SSD MobileNet V2 FPNLite 320x320", ocr_display, validated_display)
 ]
 
 # Create buttons for each model
@@ -148,6 +142,7 @@ style = ttk.Style()
 style.configure('Exit.TButton', font=('Helvetica', 12, 'bold'), foreground='red', padding=10)
 exit_button = ttk.Button(exit_button_frame, text="Exit", style="Exit.TButton", command=root.destroy)
 exit_button.pack()
+model_buttons.append(exit_button)
 
 root.bind('<Escape>', lambda event: root.destroy())
 
