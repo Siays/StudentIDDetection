@@ -39,9 +39,20 @@ def check_exp_date(string):
     return False, ""
 
 
-status, student_id = check_id("23WMR09454")
-print("status: {}, id: {}".format(status, student_id))
+def get_validated_info(valid_student_id, expiry_date):
+    output_str = ("Valid Student."
+                  "\n"
+                  "\nStudent ID details:"
+                  "\nStudent ID: {}"
+                  "\nExpiry date: {}".format(valid_student_id, expiry_date))
+    return output_str
 
-expiry_status, date = check_exp_date("01-05-2024")
 
-print("expiry_status: {}, date: {}".format(expiry_status, date))
+# status, student_id = check_id("23WMR09454")
+# print("status: {}, id: {}".format(status, student_id))
+#
+# expiry_status, date = check_exp_date("01-05-2024")
+#
+# print("expiry_status: {}, date: {}".format(expiry_status, date))
+#
+# print(get_validated_info("23WMR09454", "01-05-2024"))
