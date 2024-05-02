@@ -35,7 +35,7 @@ def detectronDetect(ocr_display):
         # Perform prediction
         outputs = predictor(frame)
 
-        threshold = 0.5
+        threshold = 0.8
 
         # Display predictions
         preds = outputs["instances"].pred_classes.tolist()
@@ -59,7 +59,6 @@ def detectronDetect(ocr_display):
                 if et.check_id(text) and et.check_exp_date(text):
                     winsound.Beep(1000, 200)
                 ocr_display.set(text)
-                # cv2.putText(frame, text, (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
                 cv2.putText(frame, f'{score * 100:.2f}%', (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
         cv2.imshow('Phone Camera', frame)
 
