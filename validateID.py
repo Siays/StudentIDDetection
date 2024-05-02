@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 def check_id(string):
-    student_id_reg = r'(?:\d|O){2}[A-Z]{3}(?:\d|O){5}'  # digit | o in uppercase , accept o in between the digits
+    student_id_reg = r'(?:\d|O){2}[A-Z]{3}(?:\d){5}'
     match = re.search(student_id_reg, string)
 
     if match:
