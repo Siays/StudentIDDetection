@@ -47,7 +47,7 @@ class VideoStream:
 
     def __init__(self, resolution=(640, 480), framerate=30):
         # Initialize the PiCamera and the camera image stream
-        self.stream = cv2.VideoCapture(2)
+        self.stream = cv2.VideoCapture(1)
         ret = self.stream.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
         ret = self.stream.set(3, resolution[0])
         ret = self.stream.set(4, resolution[1])
@@ -173,6 +173,10 @@ def ssd_model_detect(ocr_display, validated_display):
     videostream = VideoStream(resolution=(im_w, im_h), framerate=30).start()
     time.sleep(1)
 
+    # Create a window
+    win_name = 'Phone camera'
+    cv2.namedWindow(win_name)
+
     # for frame1 in camera.capture_continuous(rawCapture, format="bgr",use_video_port=True):
     while True:
 
@@ -254,15 +258,15 @@ def ssd_model_detect(ocr_display, validated_display):
                     cv2.LINE_AA)
 
         # All the results have been drawn on the frame, so it's time to display it.
-        cv2.imshow('Phone camera', frame)
+        cv2.imshow(win_name, frame)
 
         # Calculate framerate
         t2 = cv2.getTickCount()
         time1 = (t2 - t1) / freq
         frame_rate_calc = 1 / time1
 
-        # Press 'q' to quit
-        if cv2.waitKey(1) == ord('q'):
+        # Press 'q' to quit or the close button
+        if (cv2.waitKey(1) & 0xFF == ord('q')) or (cv2.getWindowProperty(win_name, cv2.WND_PROP_VISIBLE) < 1):
             break
 
     # Clean up

@@ -23,6 +23,10 @@ def detectron_detect(ocr_display, validated_display):
 
     cap = cv2.VideoCapture(1)
 
+    # Create a window
+    win_name = 'Phone camera'
+    cv2.namedWindow(win_name)
+
     while True:
         # Read the next frame
         ret, frame = cap.read()
@@ -65,10 +69,10 @@ def detectron_detect(ocr_display, validated_display):
 
                 # cv2.putText(frame, text, (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
                 cv2.putText(frame, f'{score * 100:.2f}%', (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-        cv2.imshow('Phone Camera', frame)
+        cv2.imshow(win_name, frame)
 
-        # Exit on key press
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        # Press 'q' to quit or the close button
+        if (cv2.waitKey(1) & 0xFF == ord('q')) or (cv2.getWindowProperty(win_name, cv2.WND_PROP_VISIBLE) < 1):
             break
 
     # Release resources

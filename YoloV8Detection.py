@@ -38,6 +38,10 @@ def yolo_v8_detect(ocr_display, validated_display):
 
     cap = cv2.VideoCapture(1)
 
+    # Create a window
+    win_name = 'Phone camera'
+    cv2.namedWindow(win_name)
+
     while True:
         ret, frame = cap.read()
         if not ret:
@@ -74,8 +78,9 @@ def yolo_v8_detect(ocr_display, validated_display):
 
         #             time.sleep(1)
 
-        cv2.imshow('Phone camera', frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        cv2.imshow(win_name, frame)
+        # Press 'q' to quit or the close button
+        if (cv2.waitKey(1) & 0xFF == ord('q')) or (cv2.getWindowProperty(win_name, cv2.WND_PROP_VISIBLE) < 1):
             break
 
     cap.release()
