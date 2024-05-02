@@ -25,19 +25,22 @@ model = YOLO(r'.\card_test20\weights\best.pt')
 text = ""
 
 
-
-def yoloV8_detect(ocr_display):
+def yolo_v8_detect(ocr_display, validated_display):
     global text
     # font
     font = cv2.FONT_HERSHEY_SIMPLEX
-    # fontScale
-    fontScale = 0.5
+    # font_scale
+    font_scale = 0.5
     # Blue color in BGR
     color = (255, 0, 0)
     # Line thickness of 2 px
     thickness = 1
 
     cap = cv2.VideoCapture(1)
+
+    # Create a window
+    win_name = 'Phone camera'
+    cv2.namedWindow(win_name)
 
     while True:
         ret, frame = cap.read()
@@ -56,25 +59,28 @@ def yoloV8_detect(ocr_display):
 
                 # extract text from the student card
                 roi = frame[int(y1):int(y2), int(x1):int(x2)]
-                #covnert roi to grayscale making teserract work btr
+                # convert roi to grayscale making teserract work btr
                 gray_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
                 text = pytesseract.image_to_string(gray_roi)
-                if et.check_id(text) and et.check_exp_date(text):
+                id_check, student_id = et.check_id(text)
+                exp_date_check, exp_date = et.check_exp_date(text)
+                if id_check and exp_date_check:
                     winsound.Beep(1000, 200)
+                    validated_display.set(et.get_validated_info(student_id, exp_date))
                 ocr_display.set(text)
 
-                #box the card with its confidence level
+                # box the card with its confidence level
                 detected.append([x1, y1, x2, y2, confident])
-                org = (int(x1), int(y1) - 5) #the coordinate
+                org = (int(x1), int(y1) - 5)  # the coordinate
                 cv2.putText(frame, 'Confidence = {:.2f}'.format(confident), org, font,
-                       fontScale, color, thickness, cv2.LINE_AA)
+                            font_scale, color, thickness, cv2.LINE_AA)
                 cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
 
-    #             time.sleep(1)
+        #             time.sleep(1)
 
-
-        cv2.imshow('Phone camera', frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        cv2.imshow(win_name, frame)
+        # Press 'q' to quit or the close button
+        if (cv2.waitKey(1) & 0xFF == ord('q')) or (cv2.getWindowProperty(win_name, cv2.WND_PROP_VISIBLE) < 1):
             break
 
     cap.release()
@@ -104,7 +110,3 @@ def yoloV8_detect(ocr_display):
     #     probs = result.probs  # Probs object for classification outputs
     #     result.show()  # display to screen
 # test_string = "SIA YEONG SHENG == 23WMR09471 -----=ad EXPIRY DATE: 31-08-2025 200010123"
-
-
-
-
