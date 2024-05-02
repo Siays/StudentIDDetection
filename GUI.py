@@ -21,9 +21,9 @@ class ModelRunner:
             # Start the appropriate model based on self.model_name
             if self.model_name == "Yolo v8":
                 YoloV8Detection.yolo_v8_detect(self.model_ocr_display, self.last_validated_display)
-            elif self.model_name == "Detectron 2":
+            elif self.model_name == "Faster RCNN":
                 DetectronPredict.detectron_detect(self.model_ocr_display, self.last_validated_display)
-            elif self.model_name == "SSD MobileNet V2 FPNLite 320x320":
+            elif self.model_name == "SSD MobileNet":
                 SSDModelDetection.ssd_model_detect(self.model_ocr_display, self.last_validated_display)
             stop_model(self)
 
@@ -105,9 +105,9 @@ exit_button_frame = tk.Frame(root)
 exit_button_frame.grid(row=3, column=0, pady=10)  # Add some vertical padding
 
 # Add a label for displaying the instructions
-instructions_title = tk.Label(instructions_frame, font=('Helvetica', 12),
+instructions_title = tk.Label(instructions_frame, font=('Helvetica', 12, 'bold'),
                               text="Instructions:\nClick on a button to run that model.\nPress "
-                                   "'q' to stop the running model.\nPress 'esc' or click the "
+                                   "\"q\" to stop the running model.\nPress \"esc\" or click the "
                                    "\"Exit\" button to exit the "
                                    "program.")
 instructions_title.pack()
@@ -150,8 +150,8 @@ ocr_box.grid(row=1, column=1, padx=5, pady=5)  # Add some vertical and horizonta
 # Create model runners
 model_runners = [
     ModelRunner("Yolo v8", ocr_display, validated_display),
-    ModelRunner("Detectron 2", ocr_display, validated_display),
-    ModelRunner("SSD MobileNet V2 FPNLite 320x320", ocr_display, validated_display)
+    ModelRunner("Faster RCNN", ocr_display, validated_display),
+    ModelRunner("SSD MobileNet", ocr_display, validated_display)
 ]
 
 # Create buttons for each model
