@@ -34,7 +34,7 @@ class ModelRunner:
 def start_model(model):
     if model.thread is None or not model.thread.is_alive():
         model.model_ocr_display.set("")  # Clear OCR display when starting a model
-        model.last_validated_display.set("") # Clear validated display when starting a model
+        model.last_validated_display.set("")  # Clear validated display when starting a model
         model.thread = threading.Thread(target=model.run_model)
         model.thread.start()
         disable_buttons(exclude_button=model_buttons[model_runners.index(model)])
@@ -49,11 +49,39 @@ def disable_buttons(exclude_button):
     for button in model_buttons:
         if button != exclude_button:
             button.config(state=tk.DISABLED)
+    unbind_escape_button()
+    disable_close_button()
 
 
 def enable_buttons():
     for button in model_buttons:
         button.config(state=tk.NORMAL)
+    bind_escape_button()
+    enable_close_button()
+
+
+def unbind_escape_button():
+    root.unbind("<Escape>")
+
+
+def bind_escape_button():
+    root.bind('<Escape>', lambda event: end_program())
+
+
+def disable_close_button():
+    # Disable the close button
+    root.protocol("WM_DELETE_WINDOW", lambda: None)
+
+
+def enable_close_button():
+    # Enable the close button
+    root.protocol("WM_DELETE_WINDOW", root.destroy)
+
+
+def end_program():
+    for model in model_runners:
+        stop_model(model)
+    root.destroy()
 
 
 root = tk.Tk()
@@ -140,11 +168,11 @@ for model_runner in model_runners:
 # Create exit button
 style = ttk.Style()
 style.configure('Exit.TButton', font=('Helvetica', 12, 'bold'), foreground='red', padding=10)
-exit_button = ttk.Button(exit_button_frame, text="Exit", style="Exit.TButton", command=root.destroy)
+exit_button = ttk.Button(exit_button_frame, text="Exit", style="Exit.TButton", command=lambda: end_program())
 exit_button.pack()
 model_buttons.append(exit_button)
 
-root.bind('<Escape>', lambda event: root.destroy())
+bind_escape_button()
 
 # Start GUI
 root.mainloop()
