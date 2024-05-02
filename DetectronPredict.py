@@ -39,7 +39,7 @@ def detectron_detect(ocr_display, validated_display):
         # Perform prediction
         outputs = predictor(frame)
 
-        threshold = 0.5
+        threshold = 0.8
 
         # Display predictions
         preds = outputs["instances"].pred_classes.tolist()
@@ -69,6 +69,7 @@ def detectron_detect(ocr_display, validated_display):
 
                 # cv2.putText(frame, text, (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
                 cv2.putText(frame, f'{score * 100:.2f}%', (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
         cv2.imshow(win_name, frame)
 
         # Press 'q' to quit or the close button
