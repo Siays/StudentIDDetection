@@ -103,7 +103,7 @@ validated_display_title.grid(row=0, column=0, padx=5, pady=5)  # Add some vertic
 
 # Create a box for the validated results display with an outline
 validated_display_box = tk.Label(results_frame, textvariable=validated_display, relief="solid", width=55,
-                                 height=120)  # Set the default size of the display box
+                                 height=120, font=('Helvetica', 12))  # Set the default size of the display box
 validated_display_box.grid(row=1, column=0, padx=5, pady=5)  # Add some vertical and horizontal padding
 
 # Create text box for displaying OCR results
@@ -116,7 +116,7 @@ ocr_label_title.grid(row=0, column=1, padx=5, pady=10)  # Add some vertical and 
 
 # Create a box for the OCR display with an outline
 ocr_box = tk.Label(results_frame, textvariable=ocr_display, relief="solid", width=55,
-                   height=120)  # Set the default size of the display box
+                   height=120, font=('Helvetica', 12))  # Set the default size of the display box
 ocr_box.grid(row=1, column=1, padx=5, pady=5)  # Add some vertical and horizontal padding
 
 # Create model runners
