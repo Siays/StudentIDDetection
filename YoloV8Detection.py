@@ -25,7 +25,7 @@ model = YOLO(r'.\card_test20\weights\best.pt')
 text = ""
 
 
-def yolo_v8_detect(ocr_display):
+def yolo_v8_detect(ocr_display, validated_display):
     global text
     # font
     font = cv2.FONT_HERSHEY_SIMPLEX
@@ -58,8 +58,11 @@ def yolo_v8_detect(ocr_display):
                 # convert roi to grayscale making teserract work btr
                 gray_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
                 text = pytesseract.image_to_string(gray_roi)
-                if et.check_id(text) and et.check_exp_date(text):
+                id_check, student_id = et.check_id(text)
+                exp_date_check, exp_date = et.check_exp_date(text)
+                if id_check and exp_date_check:
                     winsound.Beep(1000, 200)
+                    validated_display.set(et.get_validated_info(student_id, exp_date))
                 ocr_display.set(text)
 
                 # box the card with its confidence level

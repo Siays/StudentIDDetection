@@ -10,7 +10,7 @@ import winsound
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 
-def detectron_detect(ocr_display):
+def detectron_detect(ocr_display, validated_display):
     # Load config from a config file
     cfg = get_cfg()
     cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml"))
@@ -56,9 +56,13 @@ def detectron_detect(ocr_display):
                 object_image = frame[y1:y2, x1:x2]
                 gray_object_image = cv2.cvtColor(object_image, cv2.COLOR_BGR2GRAY)
                 text = pytesseract.image_to_string(gray_object_image)
-                if et.check_id(text) and et.check_exp_date(text):
+                id_check, student_id = et.check_id(text)
+                exp_date_check, exp_date = et.check_exp_date(text)
+                if id_check and exp_date_check:
                     winsound.Beep(1000, 200)
+                    validated_display.set(et.get_validated_info(student_id, exp_date))
                 ocr_display.set(text)
+
                 # cv2.putText(frame, text, (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
                 cv2.putText(frame, f'{score * 100:.2f}%', (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
         cv2.imshow('Phone Camera', frame)
