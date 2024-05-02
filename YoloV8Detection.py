@@ -26,7 +26,7 @@ text = ""
 
 
 
-def yoloV8_dectect(ocr_display):
+def yoloV8_detect(ocr_display):
     global text
     # font
     font = cv2.FONT_HERSHEY_SIMPLEX
@@ -43,6 +43,10 @@ def yoloV8_dectect(ocr_display):
         ret, frame = cap.read()
         if not ret:
             break
+
+        # Resize the frame
+        frame = cv2.resize(frame, (700, 700), interpolation=cv2.INTER_LINEAR)
+
         model.predict(frame, conf=0.5)
         detections = model(frame)[0]
         detected = []

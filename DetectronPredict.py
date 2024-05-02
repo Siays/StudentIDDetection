@@ -3,7 +3,6 @@ from detectron2.engine import DefaultPredictor
 from detectron2 import model_zoo
 import pytesseract
 import cv2
-import re
 import validateID as et
 import winsound
 

@@ -2,6 +2,7 @@ import tkinter as tk
 import threading
 
 import DetectronPredict
+import SSDModelDetection
 import YoloV8Detection  # Import the YoloV8Detection module
 
 class ModelRunner:
@@ -16,12 +17,12 @@ class ModelRunner:
         while self.running:
             # Start the appropriate model based on self.model_name
             if self.model_name == "Yolo v8":
-                YoloV8Detection.yoloV8_dectect(self.ocr_display)
-
-            elif self.model_name == "Detectron2":
+                YoloV8Detection.yoloV8_detect(self.ocr_display)
+            elif self.model_name == "Detectron 2":
                 DetectronPredict.detectronDetect(self.ocr_display)
-            elif self.model_name == "Model 3":
-                pass
+            elif self.model_name == "SSD MobileNet V2 FPNLite 320x320":
+                SSDModelDetection.ssdModel_detect(self.ocr_display)
+            stop_model(self)
 
     def stop_model(self):
         self.running = False
@@ -31,9 +32,11 @@ def start_model(model_runner):
         model_runner.ocr_display.set("")  # Clear OCR display when starting a model
         model_runner.thread = threading.Thread(target=model_runner.run_model)
         model_runner.thread.start()
+        disable_buttons(exclude_button=model_buttons[model_runners.index(model_runner)])
 
 def stop_model(model_runner):
     model_runner.stop_model()
+    enable_buttons()
 
 def disable_buttons(exclude_button):
     for button in model_buttons:
@@ -74,8 +77,8 @@ ocr_label.pack()
 # Create model runners
 model_runners = [
     ModelRunner("Yolo v8", ocr_display),
-    ModelRunner("Detectron2", ocr_display),
-    ModelRunner("Model 3", ocr_display)
+    ModelRunner("Detectron 2", ocr_display),
+    ModelRunner("SSD MobileNet V2 FPNLite 320x320", ocr_display)
 ]
 
 # Create buttons for each model
