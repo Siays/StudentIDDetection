@@ -37,6 +37,8 @@ def check_exp_date(string):
         if expiry_date > current_date:
             print("Not expired.")
             return True
+        else:
+            print("Expired.")
 
     return False
 

@@ -108,7 +108,7 @@ def ssdModel_detect(ocr_display):
     GRAPH_NAME = 'detect.tflite'
     LABELMAP_NAME = 'labelmap.txt'
     min_conf_threshold = 0.8
-    resW, resH = 1280, 720
+    resW, resH = 640, 480
     imW, imH = int(resW), int(resH)
     # use_TPU = args.edgetpu
 
@@ -182,6 +182,9 @@ def ssdModel_detect(ocr_display):
         # Grab frame from video stream
         frame1 = videostream.read()
 
+        # # Resize the frame
+        # frame1 = cv2.resize(frame1, (700, 700), interpolation=cv2.INTER_LINEAR)
+
         # Convert frame to numpy array and get original width and height
         frame = frame1.copy()
         frame_np = np.array(frame)
@@ -217,11 +220,6 @@ def ssdModel_detect(ocr_display):
                 ymax = int(min(imH, (boxes[i][2] * imH)))
                 xmax = int(min(imW, (boxes[i][3] * imW)))
 
-                # xmin = int(max(1, (boxes[i][1] * imW) / original_width * original_width))
-                # ymin = int(max(1, (boxes[i][0] * imH) / original_height * original_height))
-                # xmax = int(min(imW, (boxes[i][3] * imW) / original_width * original_width))
-                # ymax = int(min(imH, (boxes[i][2] * imH) / original_height * original_height))
-
                 cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), (10, 255, 0), 2)
 
                 # Draw label
@@ -238,6 +236,7 @@ def ssdModel_detect(ocr_display):
                 # Extract the text from the detected object
                 object_image = frame[ymin:ymax, xmin:xmax]
                 if object_image.size != 0:
+                    # convert object_image to grayscale making tesseract work better
                     gray_object_image = cv2.cvtColor(object_image, cv2.COLOR_BGR2GRAY)
                     text = pytesseract.image_to_string(gray_object_image)
                     if et.check_id(text) and et.check_exp_date(text):
@@ -245,6 +244,8 @@ def ssdModel_detect(ocr_display):
                     ocr_display.set(text)
                 else:
                     print("No object detected in the frame")
+
+
 
         # Draw framerate in corner of frame
         cv2.putText(frame, 'FPS: {0:.2f}'.format(frame_rate_calc), (30, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2,
