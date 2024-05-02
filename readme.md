@@ -15,7 +15,7 @@ https://github.com/UB-Mannheim/tesseract/wiki
 ```
 C:\Program Files\Tesseract-OCR
 ```
-### 5. While in the project directory (StudentIDDetection), run the code by entering the following command into the terminal:
+### 6. While in the project directory (StudentIDDetection), run the code by entering the following command into the terminal:
 ```commandline
 python GUI.py
 ```

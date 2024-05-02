@@ -156,8 +156,22 @@ model_runners = [
 
 # Create buttons for each model
 style = ttk.Style()
-style.configure('Model.TButton', font=('Helvetica', 14), foreground='black', padding=10)
+style.configure('Model.TButton', font=('Helvetica', 14, 'bold'), foreground='blue', background='pink', padding=10)
 
+
+def add_shadow(widget, x_offset, y_offset, color='gray'):
+    # Get the widget's coordinates
+    x, y = widget.winfo_x(), widget.winfo_y()
+
+    # Get the widget's dimensions
+    width, height = widget.winfo_width(), widget.winfo_height()
+
+    # Create a canvas for the shadow
+    canvas = tk.Canvas(root, width=width, height=height, highlightthickness=0)
+    canvas.place(x=x + x_offset, y=y + y_offset)
+
+    # Draw a rectangle for the shadow
+    canvas.create_rectangle(0, 0, width, height, fill=color, outline='')
 model_buttons = []
 for model_runner in model_runners:
     start_button = ttk.Button(button_frame, style="Model.TButton", text="Start " + model_runner.model_name,
@@ -165,6 +179,7 @@ for model_runner in model_runners:
     start_button.pack(side=tk.LEFT, padx=10)  # Pack buttons to the left with more space in between
     model_buttons.append(start_button)
 
+add_shadow(start_button, 3, 3)
 # Create exit button
 style = ttk.Style()
 style.configure('Exit.TButton', font=('Helvetica', 12, 'bold'), foreground='red', padding=10)
