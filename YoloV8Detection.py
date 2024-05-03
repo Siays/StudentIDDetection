@@ -1,3 +1,5 @@
+# Author: Sia Yeong Sheng
+
 import winsound
 from ultralytics import YOLO
 import cv2
